@@ -4,6 +4,9 @@
 #include <vector>
 // https://www.youtube.com/watch?v=icZj67PTFhc
 
+#define WIDTH 640
+#define HEIGHT 480
+
 void
 setup(SDL_Window *window, SDL_Renderer *renderer, Graph& graph);
 
@@ -19,7 +22,7 @@ main (int argc, char *argv[], char *envp[]) {
 
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
-    if (0==SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer)) {
+    if (0==SDL_CreateWindowAndRenderer(WIDTH, HEIGHT, 0, &window, &renderer)) {
         SDL_Event event;
         bool done = false;
         Graph graph(16,16);

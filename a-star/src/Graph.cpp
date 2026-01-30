@@ -1,5 +1,7 @@
 #include "Graph.h"
 
+#include <cfloat>
+
 Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
     this->nodes.resize(static_cast<unsigned long>(this->n_map_width * this->n_map_height));
     int i{0};
@@ -10,7 +12,6 @@ Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
         ++i;
     }
 
-    i = 0;
     for (auto &n : nodes) {
         // set North-West-South and East neighbors.
         if (n->x>0) {
@@ -40,7 +41,6 @@ Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
         if (n->x < this->n_map_width - 1 && n->y > 0 ) {
             n->neighbours.push_back(this->nodes[ (n->y - 1) * this->n_map_width + n->x + 1]);
         }
-        ++i;
     }
 
     this->set_start_node(this->nodes.front());
