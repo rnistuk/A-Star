@@ -1,2 +1,11 @@
-add_executable(a-star main.cpp src/Node.cpp src/Node.h src/Graph.cpp src/Graph.h)
+add_executable(a-star
+        main.cpp
+        src/Node.cpp
+        src/Node.h
+        src/Graph.cpp
+        src/Graph.h
+        src/GridLayout.h
+        src/GraphRenderer.h
+        src/GraphRenderer.cpp
+)
 target_link_libraries(a-star ${SDL2_LINK_LIBRARIES})

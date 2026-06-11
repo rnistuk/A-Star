@@ -1,7 +1,7 @@
 #include "src/Graph.h"
+#include "src/GraphRenderer.h"
 #include <iostream>
 #include <SDL2/SDL.h>
-#include <vector>
 // https://www.youtube.com/watch?v=icZj67PTFhc
 
 #define WIDTH 640
@@ -10,8 +10,7 @@
 void
 setup(SDL_Window *window, SDL_Renderer *renderer, Graph& graph);
 
-void
-draw(SDL_Window *window, SDL_Renderer *renderer, Graph& graph);
+void draw(SDL_Window* w, SDL_Renderer* r, Graph& g, GraphRenderer& gr);
 
 int
 main (int argc, char *argv[], char *envp[]) {
@@ -26,6 +25,7 @@ main (int argc, char *argv[], char *envp[]) {
         SDL_Event event;
         bool done = false;
         Graph graph(16,16);
+        GraphRenderer graph_renderer;
 
         // Do your set up in the setup function.
         setup(window, renderer, graph);
@@ -34,7 +34,7 @@ main (int argc, char *argv[], char *envp[]) {
         bool ctrl_pressed{false};
 
         while (!done) {
-            draw(window, renderer, graph);
+            draw(window, renderer, graph, graph_renderer);
 
             SDL_RenderPresent(renderer);
 
@@ -46,7 +46,7 @@ main (int argc, char *argv[], char *envp[]) {
                     SDL_Point p;
                     p.x = event.button.x;
                     p.y = event.button.y;
-                    auto n = graph.node_on_point(p);
+                    auto n = graph_renderer.node_at(graph, p.x, p.y);
                     if (n!= nullptr) {
                         if (shift_pressed) {
                             graph.set_start_node(n);
@@ -94,9 +94,8 @@ setup([[maybe_unused]] SDL_Window *window, [[maybe_unused]] SDL_Renderer *render
     std::cout << "setup done\n";
 }
 
-void
-draw([[maybe_unused]] SDL_Window *window, SDL_Renderer *renderer, Graph& graph) {
-    SDL_SetRenderDrawColor(renderer, 25, 188, 255, 200);
-    SDL_RenderClear(renderer);
-    graph.draw(renderer);
+void draw(SDL_Window* w, SDL_Renderer* r, Graph& g, GraphRenderer& gr) {
+    SDL_SetRenderDrawColor(r, 25, 188, 255, 200);
+    SDL_RenderClear(r);
+    gr.draw(r, g);
 }

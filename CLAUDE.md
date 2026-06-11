@@ -63,15 +63,24 @@ Current State
 *   Adjustable start/end positions (Shift+Click / Ctrl+Click)
 *   A* search with visual feedback for searched nodes and final path
 *   Graceful handling of unreachable destinations
+*   **SOLID refactor — model decoupled from SDL.** DONE, builds clean, visually verified.
+    `Node` is a pure data struct; `Graph` holds no SDL (only the search). All pixel
+    geometry lives in `src/GridLayout.h` (`to_pos`, `center`, `node_contains_point`); all
+    SDL drawing lives in `src/GraphRenderer.{h,cpp}` (`draw` orchestrates
+    `draw_connections`/`draw_nodes`/`draw_path`, plus the `node_at` hit-test). `main.cpp`
+    owns a `GraphRenderer graph_renderer`. Node colours come from a `node_colors`
+    `unordered_map` in an anonymous namespace; connection and path lines now share
+    `GridLayout::center`, fixing the old ~`node_border/2` px centring mismatch. This
+    unblocks testing `solve_astar` without a renderer.
 
 ### In Progress
 
-*   Nothing in flight
+*   None — ready to start the test framework (see Next).
 
 ### Next
 
-*   Wire up a test framework and cover `Graph`'s search (open/closed sets, heuristic,
-    unreachable case) independent of SDL
+*   Wire up GoogleTest via CMake and cover `Graph::solve_astar` independent of SDL —
+    open/closed sets, heuristic, and the unreachable case. First failing test first (TDD).
 *   Document SDL2 install per-platform (macOS done; Linux `apt` not yet)
 
 ### Decisions Pending

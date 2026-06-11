@@ -1,6 +1,7 @@
 #include "Graph.h"
 
 #include <cfloat>
+#include <cmath>
 
 Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
     this->nodes.resize(static_cast<unsigned long>(this->n_map_width * this->n_map_height));
@@ -47,21 +48,13 @@ Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
     this->set_end_node(this->nodes.back());
 }
 
-std::vector<std::shared_ptr<Node>>
-Graph::get_nodes() {return this->nodes;}
-
-std::shared_ptr<Node>
-Graph::node_on_point(const SDL_Point &p) {
-    for (auto &n : this->nodes) {
-        if (n->contains_point(p)) {
-            return n;
-        }
-    }
+std::shared_ptr<Node> Graph::node_on_point(int x, int y) {
     return nullptr;
 }
 
-void
-Graph::set_start_node(const std::shared_ptr<Node> &n) {
+std::vector<std::shared_ptr<Node>> Graph::get_nodes() { return this->nodes; }
+
+void Graph::set_start_node(const std::shared_ptr<Node> &n) {
     if (nullptr != this->node_start) {
         this->node_start->node_type = empty;
     }
@@ -69,8 +62,7 @@ Graph::set_start_node(const std::shared_ptr<Node> &n) {
     this->node_start = n;
 };
 
-void
-Graph::set_end_node(const std::shared_ptr<Node> &n) {
+void Graph::set_end_node(const std::shared_ptr<Node> &n) {
     if (nullptr != this->node_end) {
         this->node_end->node_type = empty;
     }
@@ -87,9 +79,7 @@ void Graph::reset_nodes() {
     }
 }
 
-
-void
-Graph::solve_astar(bool best_path) {
+void Graph::solve_astar(bool best_path) {
     auto distance = [] (const std::shared_ptr<Node> a, const std::shared_ptr<Node> b)
     {
         float dx = a->x - b->x;
@@ -139,46 +129,4 @@ Graph::solve_astar(bool best_path) {
             }
         }
     }
-}
-
-void
-Graph::draw_connections(SDL_Renderer *renderer) {
-    auto to_pos = [&](int x){return this->get_nodes()[0]->to_pos(x) + this->get_nodes()[0]->node_size/2;};
-    SDL_SetRenderDrawColor(renderer, 255, 18, 25, 200);
-    for(const auto &n : this->get_nodes()) {
-        for (const auto &nn : n->neighbours) {
-            if (nn && nn->node_type!=obstacle && n->node_type!=obstacle)
-                SDL_RenderDrawLine(renderer, to_pos(n->x), to_pos(n->y), to_pos(nn->x), to_pos(nn->y));
-        }
-    }
-
-}
-
-void
-Graph::draw_path(SDL_Renderer *renderer) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
-    auto p{node_end};
-    int size_adjust{p->node_size + p->node_border};
-    while(p->parent != nullptr) {
-        SDL_RenderDrawLine(
-                renderer,
-                p->x * size_adjust + size_adjust/2, p->y * size_adjust + size_adjust/2,
-                p->parent->x * size_adjust + size_adjust/2, p->parent->y * size_adjust + size_adjust/2
-        );
-        p = p->parent;
-    }
-}
-
-void
-Graph::draw_nodes(SDL_Renderer *renderer) {
-    for (auto n : this->nodes) {
-        n->draw(renderer);
-    }
-}
-
-void
-Graph::draw(SDL_Renderer *renderer) {
-    this->draw_connections(renderer);
-    this->draw_nodes(renderer);
-    this->draw_path(renderer);
 }
