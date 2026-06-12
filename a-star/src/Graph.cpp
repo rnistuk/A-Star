@@ -4,7 +4,7 @@
 #include <cmath>
 
 Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
-    this->nodes.resize(static_cast<unsigned long>(this->n_map_width * this->n_map_height));
+    this->nodes.resize(static_cast<size_t>(this->n_map_width) * this->n_map_height);
     int i{0};
     for(auto &n : nodes) {
         n = std::make_shared<Node>();
@@ -13,7 +13,7 @@ Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
         ++i;
     }
 
-    for (auto &n : nodes) {
+    for (const auto &n : nodes) {
         // set North-West-South and East neighbors.
         if (n->x>0) {
             n->neighbours.push_back(this->nodes[ n->y * this->n_map_width + n->x - 1]);
@@ -48,10 +48,6 @@ Graph::Graph(int width, int height) : n_map_width(width), n_map_height(height) {
     this->set_end_node(this->nodes.back());
 }
 
-std::shared_ptr<Node> Graph::node_on_point(int x, int y) {
-    return nullptr;
-}
-
 std::vector<std::shared_ptr<Node>> Graph::get_nodes() { return this->nodes; }
 
 void Graph::set_start_node(const std::shared_ptr<Node> &n) {
@@ -60,7 +56,7 @@ void Graph::set_start_node(const std::shared_ptr<Node> &n) {
     }
     n->node_type = start;
     this->node_start = n;
-};
+}
 
 void Graph::set_end_node(const std::shared_ptr<Node> &n) {
     if (nullptr != this->node_end) {
@@ -68,10 +64,10 @@ void Graph::set_end_node(const std::shared_ptr<Node> &n) {
     }
     n->node_type = end;
     this->node_end = n;
-};
+}
 
-void Graph::reset_nodes() {
-    for (auto n : this->nodes) {
+void Graph::reset_nodes() const {
+    for (const auto& n : this->nodes) {
         n->visited = false;
         n->global_goal = FLT_MAX;
         n->local_goal = FLT_MAX;
@@ -80,13 +76,13 @@ void Graph::reset_nodes() {
 }
 
 void Graph::solve_astar(bool best_path) {
-    auto distance = [] (const std::shared_ptr<Node> a, const std::shared_ptr<Node> b)
+    auto distance = [] (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b)
     {
-        float dx = a->x - b->x;
-        float dy = a->y - b->y;
+        const auto dx = a->x - b->x;
+        const auto dy = a->y - b->y;
         return sqrt(dx*dx + dy*dy);
     };
-    auto heuristic = [distance] (const std::shared_ptr<Node> a, const std::shared_ptr<Node> b){
+    auto heuristic = [distance] (const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b){
         return distance(a,b);
     };
 
@@ -103,7 +99,7 @@ void Graph::solve_astar(bool best_path) {
         if (!best_path && node_current == node_end) {
             return;
         }
-        not_tested.sort([](std::shared_ptr<Node> lhs, std::shared_ptr<Node> rhs){
+        not_tested.sort([](const std::shared_ptr<Node>& lhs, const std::shared_ptr<Node>& rhs){
             return lhs->global_goal < rhs->global_goal;
         });
 
@@ -117,15 +113,15 @@ void Graph::solve_astar(bool best_path) {
 
         node_current = not_tested.front();
         node_current->visited = true;
-        for (auto  nn : node_current->neighbours) {
+        for (const auto&  nn : node_current->neighbours) {
             if (!nn->visited && nn->node_type != obstacle) {
                 not_tested.push_back(nn);
             }
-            float possibly_lower_goal = node_current->local_goal + distance(node_current, nn);
+            double possibly_lower_goal = node_current->local_goal + distance(node_current, nn);
             if (possibly_lower_goal < nn->local_goal) {
                 nn->parent = node_current;
                 nn->local_goal = possibly_lower_goal;
-                nn->global_goal = nn->local_goal + heuristic(nn, node_end);
+                nn->global_goal = heuristic(nn, node_end) + nn->local_goal;
             }
         }
     }

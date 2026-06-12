@@ -8,8 +8,8 @@ struct Node {
     Node_Type node_type{empty};
 
     bool visited{false};
-    float global_goal{0};
-    float local_goal{0};
+    double global_goal{0};
+    double local_goal{0};
     int x;
     int y;
     std::vector<std::shared_ptr<Node>> neighbours;

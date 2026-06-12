@@ -10,7 +10,7 @@
 void
 setup(SDL_Window *window, SDL_Renderer *renderer, Graph& graph);
 
-void draw(SDL_Window* w, SDL_Renderer* r, Graph& g, GraphRenderer& gr);
+void draw(SDL_Renderer* r, Graph& g, GraphRenderer& gr);
 
 int
 main (int argc, char *argv[], char *envp[]) {
@@ -34,7 +34,7 @@ main (int argc, char *argv[], char *envp[]) {
         bool ctrl_pressed{false};
 
         while (!done) {
-            draw(window, renderer, graph, graph_renderer);
+            draw(renderer, graph, graph_renderer);
 
             SDL_RenderPresent(renderer);
 
@@ -53,7 +53,7 @@ main (int argc, char *argv[], char *envp[]) {
                         } else if(ctrl_pressed) {
                             graph.set_end_node(n);
                         } else {
-                            n->node_type = (n->node_type == empty ? obstacle : empty);
+                            n->node_type = n->node_type == empty ? obstacle : empty;
                         }
                     }
                 }
@@ -94,7 +94,7 @@ setup([[maybe_unused]] SDL_Window *window, [[maybe_unused]] SDL_Renderer *render
     std::cout << "setup done\n";
 }
 
-void draw(SDL_Window* w, SDL_Renderer* r, Graph& g, GraphRenderer& gr) {
+void draw(SDL_Renderer* r, Graph& g, GraphRenderer& gr) {
     SDL_SetRenderDrawColor(r, 25, 188, 255, 200);
     SDL_RenderClear(r);
     gr.draw(r, g);

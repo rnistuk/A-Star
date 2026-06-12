@@ -28,7 +28,7 @@ std::shared_ptr<Node> GraphRenderer::node_at(Graph &graph, int x_point, int y_po
 
 void GraphRenderer::draw_connections(SDL_Renderer* renderer, Graph &graph) {
     SDL_SetRenderDrawColor(renderer, 255, 18, 25, 200);
-    for(auto &n : graph.get_nodes()) {
+    for(const auto &n : graph.get_nodes()) {
         for (const auto &nn : n->neighbours) {
             if (nn && nn->node_type!=obstacle && n->node_type!=obstacle)
                 SDL_RenderDrawLine(
@@ -42,7 +42,7 @@ void GraphRenderer::draw_connections(SDL_Renderer* renderer, Graph &graph) {
 }
 
 void GraphRenderer::draw_nodes(SDL_Renderer* renderer, Graph& graph) {
-    for (auto n : graph.get_nodes()) {
+   for (const auto& n : graph.get_nodes()) {
         SDL_Color c = node_colors.at(n->node_type);
         if (n->visited && n->node_type == empty)
             c = visited_color;
@@ -57,9 +57,9 @@ void GraphRenderer::draw_nodes(SDL_Renderer* renderer, Graph& graph) {
     }
 }
 
-void GraphRenderer::draw_path(SDL_Renderer* renderer, Graph& graph) {
+void GraphRenderer::draw_path(SDL_Renderer* renderer, const Graph &graph) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200);
-    auto p{ graph.get_end_node() };\
+    auto p{ graph.get_end_node() };
     while(p->parent != nullptr) {
         SDL_RenderDrawLine(
                 renderer

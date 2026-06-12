@@ -11,16 +11,14 @@ class Graph {
     std::vector<std::shared_ptr<Node>> nodes;
     std::shared_ptr<Node> node_start;
     std::shared_ptr<Node> node_end;
-    void reset_nodes();
+    void reset_nodes() const;
 
 public:
     explicit Graph(int width = 16, int height = 16);
 
-    std::shared_ptr<Node> node_on_point(int x, int y);
+    [[nodiscard]] std::shared_ptr<Node> get_start_node() const { return this->node_start; }
 
-    std::shared_ptr<Node> get_start_node() const { return this->node_start; };
-
-    std::shared_ptr<Node> get_end_node() const { return this->node_end; };
+    [[nodiscard]] std::shared_ptr<Node> get_end_node() const { return this->node_end; }
 
     std::vector<std::shared_ptr<Node>> get_nodes();
 
